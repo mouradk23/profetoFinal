@@ -22,33 +22,31 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="registroChave">Nova chave</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="registroUsuario">Novo usuário</a></li>
                         </ul>
                     </div>
                 </ul>
             </header>
         </div>
-        <div class="row">
-            <div class="col-3">
+        <div class="row" id="divChaves">
+
+            <div class="col-3" id="">
                 <div class="card mb-4 rounded-3 shadow-sm border-secondary">
                     <div class="card-header py-3 text-white bg-success border-secondary">
-                        <h4 class="my-0 fw-normal">CHAVE 01</h4>
+                        <h4 class="my-0 fw-normal">CHAVE 88</h4>
                     </div>
                     <div class="card-body">
                         <h1 class="card-title pricing-card-title">Disponível</h1>
-                        <ul class="list-unstyled mt-3 mb-4" id="chave1">
+                        <ul class="list-unstyled mt-3 mb-4">
                             <li>SALA: </li>
-                            <li>DATA: </li>
                             <li>HORARIO: </li>
                             <li>USUÁRIO: </li>
+                            <li>CPF: </li>
                         </ul>
-                        <button type="button" class="w-100 btn btn-lg btn-primary">Reservar chave</button>
+                        <button type="button" class="w-100 btn btn-lg btn-primary" id="botao">Emprestar chave</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -57,7 +55,40 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
+        var divChaves = $('#divChaves');
+        $.ajax({
+            url: '/api/chaves',
+            type: 'get',
+            beforeSend: () => {
+                console.log('carregando...');
+            }
+        }).done(function (data) {
+            console.log(data);
+            var html = '';
+            var i = 0;
+            for (let chave of data) {
+               i++
+                html += `
+                <div class="col-3" id="">
+                    <div class="card mb-4 rounded-3 shadow-sm border-secondary">
+                        <div class="card-header py-3 text-white bg-success border-secondary">
+                            <h4 class="my-0 fw-normal">`+chave.nome+`</h4>
+                        </div>
+                        <div class="card-body">
+                        <h1 class="card-title pricing-card-title">Disponível</h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li>`+chave.sala+`</li>
+                            <li>HORARIO: </li>
+                            <li>USUÁRIO: </li>
+                            <li>CPF: </li>
+                        </ul>
+                            <button type="button" id="botao`+i+`" class="w-100 btn btn-lg btn-primary">Emprestar chave</button>
+                        </div>
+                    </div>
+                </div>`
+            }
+            divChaves.html(html) 
+        })
     </script>
 </body>
 
