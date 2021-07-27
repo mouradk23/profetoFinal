@@ -56,6 +56,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         var divChaves = $('#divChaves');
+
+
+
         $.ajax({
             url: '/api/chaves',
             type: 'get',
@@ -67,28 +70,38 @@
             var html = '';
             var i = 0;
             for (let chave of data) {
-               i++
+                i++
                 html += `
                 <div class="col-3" id="">
                     <div class="card mb-4 rounded-3 shadow-sm border-secondary">
                         <div class="card-header py-3 text-white bg-success border-secondary">
-                            <h4 class="my-0 fw-normal">`+chave.nome+`</h4>
+                            <h4 class="my-0 fw-normal">`+ chave.nome + `</h4>
                         </div>
                         <div class="card-body">
                         <h1 class="card-title pricing-card-title">Disponível</h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>`+chave.sala+`</li>
+                            <li>`+ chave.sala + `</li>
                             <li>HORARIO: </li>
                             <li>USUÁRIO: </li>
                             <li>CPF: </li>
                         </ul>
-                            <button type="button" id="botao`+i+`" class="w-100 btn btn-lg btn-primary">Emprestar chave</button>
+                            <button type="button" data-id="`+ chave.id + `" id="botao` + i + `" class="w-100 btn btn-lg btn-primary botaoClick">Emprestar chave</button>
                         </div>
                     </div>
                 </div>`
             }
-            divChaves.html(html) 
+            divChaves.html(html)
+
+            $('.botaoClick').click((ELEMENT) => {
+                var idChave = ELEMENT.id
+
+                console.log(idChave);
+                console.log('CLICK');
+
+            })
         })
+
+
     </script>
 </body>
 
