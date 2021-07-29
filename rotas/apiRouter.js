@@ -17,5 +17,6 @@ router.get('/chaves', chaveController.getAll)
 router.post('/registrochave', chaveController.registerChave)
 
 router.post('/emprestar', emprestimoController.emprestar)
+router.put('/atualizar', emprestimoController.atualizar)
 
 module.exports = router;
