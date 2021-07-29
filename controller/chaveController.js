@@ -5,8 +5,8 @@ module.exports = {
     async registerChave(req, res){
 
         try {
-            const { nome, sala } = req.body
-            const chaveNova = await Chave.create({nome, sala})
+            const { nome, sala, disponibilidade } = req.body
+            const chaveNova = await Chave.create({nome, sala, disponibilidade})
             
             if (chaveNova) {
                 res.status(201).json({chave: chaveNova, created: true});
