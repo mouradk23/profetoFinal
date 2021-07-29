@@ -11,6 +11,10 @@ class Chave extends Model {
             sala: {
                 type: DataTypes.STRING,
                 allowNull: false
+            },
+            disponibilidade: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
             }
         },
             {
