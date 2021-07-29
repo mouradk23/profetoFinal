@@ -10,8 +10,8 @@ const Emprestimo = require('../models/Emprestimo')
 
 //INICIALIZACAO DOS MODELOS
 Usuario.init(connection)
-Chave.init(connection)
 Emprestimo.init(connection)
+Chave.init(connection)
 
 //RELACIOANAMENTOS
 Chave.hasOne(Emprestimo);
