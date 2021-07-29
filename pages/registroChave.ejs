@@ -54,9 +54,12 @@
         $('#formChave').submit(function (e) {
             e.preventDefault()
 
+            var nomeNovo = $('#chave')
+            var salaNova = $('#sala')
             var key = {
-                nome: $('#chave').val(),
-                sala: $('#sala').val()
+                nome: nomeNovo.val(),
+                sala: salaNova.val(),
+                disponibilidade: false
             }
 
             var bodyKey = JSON.stringify(key);
@@ -71,6 +74,8 @@
 
                 if (data.created) {
                     alert('Chave criada com sucesso')
+                    nomeNovo.val('')
+                    salaNova.val('')
                 }
             }).fail((error) => {
                 alert('Chave inválida ou vazia')
