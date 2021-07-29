@@ -29,23 +29,23 @@
         </div>
         <div class="row" id="divChaves">
 
-            <div class="col-3" id="">
+            <!-- <div class="col-4" id="">
                 <div class="card mb-4 rounded-3 shadow-sm border-secondary">
-                    <div class="card-header py-3 text-white bg-success border-secondary">
+                    <div class="card-header py-3 text-white bg-success border-secondary ">
                         <h4 class="my-0 fw-normal">CHAVE 88</h4>
                     </div>
                     <div class="card-body">
                         <h1 class="card-title pricing-card-title">Disponível</h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>SALA: </li>
-                            <li>HORARIO: </li>
-                            <li>USUÁRIO: </li>
-                            <li>CPF: </li>
+                            <li class="mb-1">SALA: </li>
+                            <li class="mb-1">HORARIO: </li>
+                            <li class="mb-1">USUÁRIO: <input type="text" name="nome" id="nome"></li>
+                            <li class="mb-1">CPF: <input type="text" name="cpf" id="cpf"></li>
                         </ul>
                         <button type="button" class="w-100 btn btn-lg btn-primary" id="botao">Emprestar chave</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -57,51 +57,164 @@
     <script>
         var divChaves = $('#divChaves');
 
+        listaChaves();
 
-
-        $.ajax({
+        function listaChaves() {
+            $.ajax({
             url: '/api/chaves',
             type: 'get',
             beforeSend: () => {
-                console.log('carregando...');
+                // console.log('carregando...');
             }
         }).done(function (data) {
-            console.log(data);
+            // console.log(data);
             var html = '';
             var i = 0;
             for (let chave of data) {
                 i++
-                html += `
-                <div class="col-3" id="">
+
+                var botaoEmp = '<button type="button" id="botao ' + chave.id + ' " class="mb-1 w-100 btn btn-lg btn-primary botaoClick" onclick="emprestarChave(' + chave.id + ')">Emprestar chave</button>';
+                var botaoRec = '<button type="button" id="botaorecebe' + chave.id + '" class="w-100 btn btn-lg btn-primary botaoClick" onclick="receberChave(' + chave.id + ')">Receber chave</button>'
+                if (!chave.disponibilidade) {
+                    // console.log(chave.disponibilidade);
+                    html += `
+                <div class="col-4" id="">
                     <div class="card mb-4 rounded-3 shadow-sm border-secondary">
-                        <div class="card-header py-3 text-white bg-success border-secondary">
+                        <div id="divcor`+ chave.id + `" class="card-header py-3 text-white bg-success border-secondary">
                             <h4 class="my-0 fw-normal">`+ chave.nome + `</h4>
                         </div>
                         <div class="card-body">
                         <h1 class="card-title pricing-card-title">Disponível</h1>
                         <ul class="list-unstyled mt-3 mb-4">
-                            <li>`+ chave.sala + `</li>
-                            <li>HORARIO: </li>
-                            <li>USUÁRIO: </li>
-                            <li>CPF: </li>
+                            <li class="mb-1" id="chave`+ chave.id + `">` + chave.sala + `</li>
+                            <li class="mb-1">USUÁRIO: <input type="text" name="nome`+ chave.id + `" id="nome` + chave.id + `"></li>
+                            <li class="mb-1">CPF: <input type="text" name="cpf`+ chave.id + `" id="cpf` + chave.id + `"></li>
                         </ul>
-                            <button type="button" data-id="`+ chave.id + `" id="botao` + i + `" class="w-100 btn btn-lg btn-primary botaoClick">Emprestar chave</button>
+                            <div id="divBotao`+ chave.id + `">
+                                    `+ botaoEmp + `
+                            </div>
                         </div>
                     </div>
                 </div>`
+                } else {
+                    console.log(chave.disponibilidade);
+                    html += `
+                <div class="col-4" id="">
+                    <div class="card mb-4 rounded-3 shadow-sm border-secondary">
+                        <div id="divcor`+ chave.id + `" class="card-header py-3 text-white bg-danger border-secondary">
+                            <h4 class="my-0 fw-normal">`+ chave.nome + `</h4>
+                        </div>
+                        <div class="card-body">
+                        <h1 class="card-title pricing-card-title">Disponível</h1>
+                        <ul class="list-unstyled mt-3 mb-4">
+                            <li class="mb-1" id="chave`+ chave.id + `">` + chave.sala + `</li>
+                            <li class="mb-1">USUÁRIO: <input type="text" name="nome`+ chave.id + `" id="nome` + chave.id + `"></li>
+                            <li class="mb-1">CPF: <input type="text" name="cpf`+ chave.id + `" id="cpf` + chave.id + `"></li>
+                        </ul>
+                            <div id="divBotao`+ chave.id + `">
+                                `+ botaoRec + `
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                }
+
             }
             divChaves.html(html)
 
-            $('.botaoClick').click((ELEMENT) => {
-                var idChave = ELEMENT.id
 
-                console.log(idChave);
-                console.log('CLICK');
-
-            })
         })
+        }
+        
+
+        var idEmprestimo = [];
+        function emprestarChave(id) {
+            var idChave = id;
+            var idNome = $('#nome' + id + '').val()
+            var idCpf = $('#cpf' + id + '').val()
+        
+            console.log(idChave + ' ' + idNome + ' ' + idCpf);
+
+            var emprestimo = {
+                status: false,
+                pessoa: idNome,
+                cpf: idCpf,
+                chave_id: idChave
+            }
+
+            var bodyEmp = JSON.stringify(emprestimo)
+
+            $.ajax({
+                url: '/api/emprestar',
+                type: 'post',
+                data: bodyEmp,
+                contentType: 'application/json'
+            }).done((data) => {
+                console.log(data);
+                idEmprestimo[id] = data.emprestimo.id;
+                console.log(idEmprestimo[id]);
+                listaChaves()
+            }).fail((error) => {
+                console.log(error);
+            })
+
+            // var html = '<button type="button" id="botaorecebe` + chave.id + `" class="w-100 btn btn-lg btn-primary botaoClick" onclick="receberChave(` + chave.id + `)">Receber chave</button>'
+            // var divCor = $('#divcor' + id + '')
+            // var divBotao = $('#divBotao' + id + '')
+            // divBotao.html(html);
+            // console.log(idChave);
+            // divCor.removeClass()
+            // divCor.addClass('bg-danger')
+
+        }
+
+        /////////////////////////////////////////////////////
+
+        function receberChave(id) {
+            var idChave = id;
+            var idNome = $('#nome' + id + '').val()
+            var idCpf = $('#cpf' + id + '').val()
+
+            console.log(idChave + ' ' + idNome + ' ' + idCpf);
+
+            var emprestimoRec = {
+                id: idEmprestimo[id],
+                chave_id: idChave
+            }
+
+            var bodyEmpr = JSON.stringify(emprestimoRec)
+
+            $.ajax({
+                url: '/api/atualizar',
+                type: 'put',
+                data: bodyEmpr,
+                contentType: 'application/json'
+            }).done((data) => {
+                console.log(data);
+                listaChaves()
+                console.log(idEmprestimo[id]);
+            }).fail((error) => {
+                console.log(error);
+            })
+
+            // var html = ' <button type="button" id="botao` + chave.id + `" class="w-100 btn btn-lg btn-primary botaoClick" onclick="emprestarChave(` + chave.id + `)">Emprestar chave</button>'
+            // var divCor = $('#divcor' + id + '')
+            // divCor.html(html);
+            // var botaoRecebe = $('#botaorecebe' + id + '').hide()
+            // var botaoEmpresta = $('#botao' + id + '').show()
+            // divCor.removeClass('bg-danger')
+        }
 
 
+         // $('.botaoClick').click(() => {
+            //     var chaveId = $('.botaoClick').attr("data-id")
+            //     var idChave = $('#botao'+chaveId+'').data("id")
+
+            //     console.log(chaveId);
+            //     console.log(idChave);
+            //     console.log('CLICK');
+
+            // })
     </script>
 </body>
 
